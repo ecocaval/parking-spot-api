@@ -5,6 +5,10 @@ import com.api.parkingcontrol.models.ParkingSpotModel;
 import com.api.parkingcontrol.services.ParkingSpotService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,13 +45,19 @@ public class ParkingSpotController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> listParkingSpots() {
-        List<ParkingSpotModel> parkingSpotModelsOptional = parkingSpotService.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelsOptional);
+    public ResponseEntity<Page<ParkingSpotModel>> listParkingSpots(
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC)
+            Pageable pageable
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                parkingSpotService.findAll(pageable)
+        );
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto) {
+    public ResponseEntity<Object> saveParkingSpot(
+            @RequestBody @Valid ParkingSpotDto parkingSpotDto
+    ) {
         if(parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("License plate in use!");
         }
