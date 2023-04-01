@@ -18,4 +18,20 @@ public class ParkingSpotService {
     public Object save(ParkingSpotModel parkingSpotModel) {
         return parkingSpotRepository.save(parkingSpotModel);
     }
+
+    @Transactional
+    public Boolean existsByLicensePlateCar(String licensePlateCar) {
+        return parkingSpotRepository.existsByLicensePlateCar(licensePlateCar);
+    }
+
+    @Transactional
+    public Boolean existsByParkingSpotNumber(String parkingSpotNumber) {
+        return parkingSpotRepository.existsByParkingSpotNumber(parkingSpotNumber);
+    }
+
+    @Transactional
+    public Boolean existsByApartmentBLock(String apartment, String block) {
+        return (parkingSpotRepository.existsByApartment(apartment) && parkingSpotRepository.existsByBlock(block));
+    }
+
 }
