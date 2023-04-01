@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -23,17 +24,17 @@ public class ParkingSpotController {
         this.parkingSpotService = parkingSpotService;
     }
 
-    @GetMapping("/{parkingSpotNumber}")
+    @GetMapping("/{id}")
     public ResponseEntity<Object> listParkingSpot(
-        @PathVariable(value = "parkingSpotNumber") String parkingSpotNumber
+        @PathVariable(value = "id") UUID id
     ) {
-        if(!parkingSpotService.existsByParkingSpotNumber(parkingSpotNumber)) {
+        if(!parkingSpotService.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     "This parking spot is not occupied!"
             );
         }
         return ResponseEntity.status(HttpStatus.OK).body(
-                parkingSpotService.getParkingSpotByNumber(parkingSpotNumber)
+                parkingSpotService.getById(id)
         );
     }
 
@@ -47,22 +48,16 @@ public class ParkingSpotController {
     @PostMapping
     public ResponseEntity<Object> saveParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto) {
         if(parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                    "License plate in use!"
-            );
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("License plate in use!");
         }
         if(parkingSpotService.existsByParkingSpotNumber(parkingSpotDto.getParkingSpotNumber())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                    "Parking spot in use!"
-            );
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Parking spot in use!");
         }
         if(parkingSpotService.existsByApartmentBLock(
                 parkingSpotDto.getApartment(),
                 parkingSpotDto.getBlock()
         )) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                    "Apartment Block in use!"
-            );
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Apartment Block in use!");
         }
         var parkingSpotModel = new ParkingSpotModel();
         BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
@@ -70,22 +65,16 @@ public class ParkingSpotController {
         return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel));
     }
 
-    @DeleteMapping("/{parkingSpotNumber}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> clearParkingSpot(
-        @PathVariable(value = "parkingSpotNumber") String parkingSpotNumber
+        @PathVariable(value = "id") UUID id
     ) {
-        if(!parkingSpotService.existsByParkingSpotNumber(parkingSpotNumber)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    "This parking spot is not occupied!"
-            );
+        if(!parkingSpotService.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This parking spot is not occupied!");
         }
-        if(parkingSpotService.clear(parkingSpotNumber) < 1) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    "Sorry, we could not clear this parking spot!"
-            );
-        }
+        parkingSpotService.clear(id);
         return ResponseEntity.status(HttpStatus.OK).body(
-                "Parking Spot " + parkingSpotNumber + " deleted successfully!"
+                "Parking Spot cleared successfully!"
         );
     }
 }

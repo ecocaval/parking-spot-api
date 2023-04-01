@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ParkingSpotService {
@@ -16,8 +17,8 @@ public class ParkingSpotService {
         this.parkingSpotRepository = parkingSpotRepository;
     }
 
-    public Optional<ParkingSpotModel> getParkingSpotByNumber(String parkingSpotNumber) {
-        return parkingSpotRepository.findByParkingSpotNumber(parkingSpotNumber);
+    public Optional<ParkingSpotModel> getById(UUID id) {
+        return parkingSpotRepository.findById(id);
     }
 
     public List<ParkingSpotModel> getParkingSpots() {
@@ -32,6 +33,10 @@ public class ParkingSpotService {
         return parkingSpotRepository.existsByParkingSpotNumber(parkingSpotNumber);
     }
 
+    public Boolean existsById(UUID id) {
+        return parkingSpotRepository.existsById(id);
+    }
+
     public Boolean existsByApartmentBLock(String apartment, String block) {
         return parkingSpotRepository.existsByApartmentAndBlock(apartment, block);
     }
@@ -42,8 +47,8 @@ public class ParkingSpotService {
     }
 
     @Transactional
-    public Integer clear(String parkingSpotNumber) {
-        return parkingSpotRepository.deleteByParkingSpotNumber(parkingSpotNumber);
+    public void clear(UUID id) {
+        parkingSpotRepository.deleteById(id);
     }
 
 
