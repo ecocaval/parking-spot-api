@@ -17,11 +17,11 @@ public class ParkingSpotService {
         this.parkingSpotRepository = parkingSpotRepository;
     }
 
-    public Optional<ParkingSpotModel> getById(UUID id) {
+    public Optional<ParkingSpotModel> findById(UUID id) {
         return parkingSpotRepository.findById(id);
     }
 
-    public List<ParkingSpotModel> getParkingSpots() {
+    public List<ParkingSpotModel> findAll() {
         return parkingSpotRepository.findAll();
     }
 
