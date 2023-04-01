@@ -53,6 +53,4 @@ public class ParkingSpotService {
         parkingSpotRepository.deleteById(id);
     }
 
-
-
 }
