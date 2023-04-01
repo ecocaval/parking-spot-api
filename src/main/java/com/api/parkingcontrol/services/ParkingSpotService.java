@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ParkingSpotService {
@@ -15,38 +16,34 @@ public class ParkingSpotService {
         this.parkingSpotRepository = parkingSpotRepository;
     }
 
-    @Transactional
-    public ParkingSpotModel getParkingSpotByNumber(String parkingSpotNumber) {
+    public Optional<ParkingSpotModel> getParkingSpotByNumber(String parkingSpotNumber) {
         return parkingSpotRepository.findByParkingSpotNumber(parkingSpotNumber);
     }
 
-    @Transactional
     public List<ParkingSpotModel> getParkingSpots() {
         return parkingSpotRepository.findAll();
+    }
+
+    public Boolean existsByLicensePlateCar(String licensePlateCar) {
+        return parkingSpotRepository.existsByLicensePlateCar(licensePlateCar);
+    }
+
+    public Boolean existsByParkingSpotNumber(String parkingSpotNumber) {
+        return parkingSpotRepository.existsByParkingSpotNumber(parkingSpotNumber);
+    }
+
+    public Boolean existsByApartmentBLock(String apartment, String block) {
+        return parkingSpotRepository.existsByApartmentAndBlock(apartment, block);
     }
 
     @Transactional
     public Object save(ParkingSpotModel parkingSpotModel) {
         return parkingSpotRepository.save(parkingSpotModel);
     }
+
     @Transactional
     public Integer clear(String parkingSpotNumber) {
         return parkingSpotRepository.deleteByParkingSpotNumber(parkingSpotNumber);
-    }
-
-    @Transactional
-    public Boolean existsByLicensePlateCar(String licensePlateCar) {
-        return parkingSpotRepository.existsByLicensePlateCar(licensePlateCar);
-    }
-
-    @Transactional
-    public Boolean existsByParkingSpotNumber(String parkingSpotNumber) {
-        return parkingSpotRepository.existsByParkingSpotNumber(parkingSpotNumber);
-    }
-
-    @Transactional
-    public Boolean existsByApartmentBLock(String apartment, String block) {
-        return parkingSpotRepository.existsByApartmentAndBlock(apartment, block);
     }
 
 
