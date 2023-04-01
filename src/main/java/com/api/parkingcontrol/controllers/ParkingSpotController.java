@@ -21,8 +21,8 @@ public class ParkingSpotController {
         this.parkingSpotService = parkingSpotService;
     }
 
-    @GetMapping
-    public ResponseEntity<Object> listParkingSpot(@RequestParam String parkingSpotNumber) {
+    @GetMapping("/{parkingSpotNumber}")
+    public ResponseEntity<Object> listParkingSpot(@PathVariable String parkingSpotNumber) {
         if(!parkingSpotService.existsByParkingSpotNumber(parkingSpotNumber)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This parking spot is not occupied!");
         }
@@ -45,5 +45,18 @@ public class ParkingSpotController {
         BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
         parkingSpotModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")) );
         return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Object> clearParkingSpot(@RequestParam String parkingSpotNumber) {
+        if(!parkingSpotService.existsByParkingSpotNumber(parkingSpotNumber)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This parking spot is not occupied!");
+        }
+        if(parkingSpotService.clear(parkingSpotNumber) < 1) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Sorry, we could not clear this parking spot!");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(
+                "Parking Spot " + parkingSpotNumber + " deleted successfully!"
+        );
     }
 }

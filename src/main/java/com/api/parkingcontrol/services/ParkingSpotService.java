@@ -22,6 +22,10 @@ public class ParkingSpotService {
     public Object save(ParkingSpotModel parkingSpotModel) {
         return parkingSpotRepository.save(parkingSpotModel);
     }
+    @Transactional
+    public Integer clear(String parkingSpotNumber) {
+        return parkingSpotRepository.deleteByParkingSpotNumber(parkingSpotNumber);
+    }
 
     @Transactional
     public Boolean existsByLicensePlateCar(String licensePlateCar) {
@@ -35,7 +39,7 @@ public class ParkingSpotService {
 
     @Transactional
     public Boolean existsByApartmentBLock(String apartment, String block) {
-        return (parkingSpotRepository.existsByApartment(apartment) && parkingSpotRepository.existsByBlock(block));
+        return parkingSpotRepository.existsByApartmentAndBlock(apartment, block);
     }
 
 }
