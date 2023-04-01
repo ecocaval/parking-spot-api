@@ -16,27 +16,34 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/parking-spots")
+
 public class ParkingSpotController {
     final ParkingSpotService parkingSpotService;
     public ParkingSpotController(ParkingSpotService parkingSpotService) {
         this.parkingSpotService = parkingSpotService;
     }
+
     @GetMapping("/{parkingSpotNumber}")
-    public ResponseEntity<Object> listParkingSpot(@PathVariable String parkingSpotNumber) {
+    public ResponseEntity<Object> listParkingSpot(
+        @PathVariable(value = "parkingSpotNumber") String parkingSpotNumber
+    ) {
         if(!parkingSpotService.existsByParkingSpotNumber(parkingSpotNumber)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     "This parking spot is not occupied!"
             );
         }
-        var parkingSpotModel = parkingSpotService.getParkingSpotByNumber(parkingSpotNumber);
-        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModel);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                parkingSpotService.getParkingSpotByNumber(parkingSpotNumber)
+        );
     }
+
     @GetMapping
     public ResponseEntity<List<ParkingSpotModel>> listParkingSpots() {
         return ResponseEntity.status(HttpStatus.OK).body(
                 parkingSpotService.getParkingSpots()
         );
     }
+
     @PostMapping
     public ResponseEntity<Object> saveParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto) {
         if(parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar())) {
@@ -62,8 +69,11 @@ public class ParkingSpotController {
         parkingSpotModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")) );
         return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel));
     }
-    @DeleteMapping
-    public ResponseEntity<Object> clearParkingSpot(@RequestParam String parkingSpotNumber) {
+
+    @DeleteMapping("/{parkingSpotNumber}")
+    public ResponseEntity<Object> clearParkingSpot(
+        @PathVariable(value = "parkingSpotNumber") String parkingSpotNumber
+    ) {
         if(!parkingSpotService.existsByParkingSpotNumber(parkingSpotNumber)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     "This parking spot is not occupied!"
