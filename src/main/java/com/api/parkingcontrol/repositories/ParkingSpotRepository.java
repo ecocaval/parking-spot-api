@@ -4,6 +4,7 @@ import com.api.parkingcontrol.models.ParkingSpotModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -13,4 +14,5 @@ public interface ParkingSpotRepository extends JpaRepository<ParkingSpotModel, U
     boolean existsByApartmentAndBlock(String apartment, String block);
     Integer deleteByParkingSpotNumber(String parkingSpotNumber);
     ParkingSpotModel findByParkingSpotNumber(String parkingSpotNumber);
+    List<ParkingSpotModel> findAll();
 }
